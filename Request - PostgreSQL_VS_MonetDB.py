@@ -310,7 +310,7 @@ def test_queries(postgres_conn, monet_conn):
         "Aggregation": "SELECT passenger_count, AVG(total_amount) FROM taxi_trips GROUP BY passenger_count;",
         "Filter": "SELECT * FROM taxi_trips WHERE trip_distance > 5.0;",
         "Join (Self-Join)": """
-            SELECT t1.passager_count, t2.passager_count
+            SELECT t1.passenger_count, t2.passenger_count
             FROM taxi_trips t1 JOIN taxi_trips t2
             ON t1.id = t2.id
             LIMIT 100;
@@ -347,7 +347,7 @@ def plot_query_results(postgres_times, monet_times):
 
     plt.xlabel('Requêtes')
     plt.ylabel('Temps d\'exécution (s)')
-    plt.title('Comparaison des performances des requêtes : PostgreSQL vs MonetDB')
+    plt.title('Graphique 9 : Comparaison des performances des requêtes - PostgreSQL vs MonetDB')
     plt.xticks(x, query_names, rotation=45)
     plt.legend()
     plt.tight_layout()
