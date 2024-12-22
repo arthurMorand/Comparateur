@@ -303,8 +303,28 @@ def execute_query(conn, query, db_name):
         print(f"Erreur lors de l'exécution de la requête dans {db_name} : {e}")
         return None, []
 
-# Fonction pour tester plusieurs requêtes
-def test_queries(postgres_conn, monet_conn):
+# Fonction pour exécuter une requête plusieurs fois et mesurer le temps d'exécution
+def execute_query(conn, query, db_name, repetitions=5):
+    times = []
+    results = None
+    try:
+        for _ in range(repetitions):
+            start_time = time.time()
+            with conn.cursor() as cursor:
+                cursor.execute(query)
+                results = cursor.fetchall()
+            elapsed_time = time.time() - start_time
+            times.append(elapsed_time)
+        avg_time = np.mean(times)
+        std_time = np.std(times)
+        print(f"{db_name} : Moyenne = {avg_time:.4f} s, Ecart-type = {std_time:.4f} s.")
+        return avg_time, std_time, results
+    except Exception as e:
+        print(f"Erreur lors de l'exécution de la requête dans {db_name} : {e}")
+        return None, None, []
+
+# Fonction pour tester plusieurs requêtes avec répétitions
+def test_queries(postgres_conn, monet_conn, repetitions=5):
     queries = {
         "Simple Select": "SELECT * FROM taxi_trips LIMIT 100;",
         "Aggregation": "SELECT passenger_count, AVG(total_amount) FROM taxi_trips GROUP BY passenger_count;",
@@ -317,33 +337,35 @@ def test_queries(postgres_conn, monet_conn):
         """
     }
 
-    postgres_times = {}
-    monet_times = {}
+    postgres_stats = {}
+    monet_stats = {}
 
     for query_name, query in queries.items():
         print(f"Test de la requête : {query_name}")
 
         # Test sur PostgreSQL
-        postgres_time, _ = execute_query(postgres_conn, query, "PostgreSQL")
-        postgres_times[query_name] = postgres_time
+        postgres_avg, postgres_std, _ = execute_query(postgres_conn, query, "PostgreSQL", repetitions)
+        postgres_stats[query_name] = (postgres_avg, postgres_std)
 
         # Test sur MonetDB
-        monet_time, _ = execute_query(monet_conn, query, "MonetDB")
-        monet_times[query_name] = monet_time
+        monet_avg, monet_std, _ = execute_query(monet_conn, query, "MonetDB", repetitions)
+        monet_stats[query_name] = (monet_avg, monet_std)
 
-    return postgres_times, monet_times
+    return postgres_stats, monet_stats
 
-# Visualisation des résultats de performance des requêtes
-def plot_query_results(postgres_times, monet_times):
-    query_names = list(postgres_times.keys())
-    postgres_values = list(postgres_times.values())
-    monet_values = list(monet_times.values())
+# Visualisation des résultats de performance des requêtes avec barres d'erreur
+def plot_query_results(postgres_stats, monet_stats):
+    query_names = list(postgres_stats.keys())
+    postgres_means = [stats[0] for stats in postgres_stats.values()]
+    postgres_stds = [stats[1] for stats in postgres_stats.values()]
+    monet_means = [stats[0] for stats in monet_stats.values()]
+    monet_stds = [stats[1] for stats in monet_stats.values()]
 
     x = np.arange(len(query_names))
 
     plt.figure(figsize=(12, 6))
-    plt.bar(x - 0.2, postgres_values, 0.4, label='PostgreSQL', color='blue')
-    plt.bar(x + 0.2, monet_values, 0.4, label='MonetDB', color='orange')
+    plt.bar(x - 0.2, postgres_means, 0.4, label='PostgreSQL', color='blue', yerr=postgres_stds, capsize=5)
+    plt.bar(x + 0.2, monet_means, 0.4, label='MonetDB', color='orange', yerr=monet_stds, capsize=5)
 
     plt.xlabel('Requêtes')
     plt.ylabel('Temps d\'exécution (s)')
@@ -417,11 +439,11 @@ def main():
         pbar.update(1)
 
         # 7. Tester les requêtes
-        postgres_times, monet_times = test_queries(postgres_conn, monet_conn)
+        postgres_stats, monet_stats = test_queries(postgres_conn, monet_conn)
         pbar.update(1)
 
         # 8. Visualisation des résultats
-        plot_query_results(postgres_times, monet_times)
+        plot_query_results(postgres_stats, monet_stats)
         pbar.update(1)
 
         # Fermeture des connexions
