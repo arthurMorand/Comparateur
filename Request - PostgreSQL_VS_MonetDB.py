@@ -310,10 +310,9 @@ def test_queries(postgres_conn, monet_conn):
         "Aggregation": "SELECT passenger_count, AVG(total_amount) FROM taxi_trips GROUP BY passenger_count;",
         "Filter": "SELECT * FROM taxi_trips WHERE trip_distance > 5.0;",
         "Join (Self-Join)": """
-            SELECT t1.id, t2.id
+            SELECT t1.passager_count, t2.passager_count
             FROM taxi_trips t1 JOIN taxi_trips t2
-            ON t1.passenger_count = t2.passenger_count
-            WHERE t1.id < t2.id
+            ON t1.id = t2.id
             LIMIT 100;
         """
     }
@@ -414,7 +413,7 @@ def main():
         pbar.update(1)
         
         # 6. Insertion des données dans PostgreSQL et MonetDB
-        insert_data(postgres_conn, monet_conn, data_tuples, "taxi_trips")  # Appel à insert_data pour insérer les données
+        insert_data(postgres_conn, monet_conn, data_tuples, "taxi_trips") 
         pbar.update(1)
 
         # 7. Tester les requêtes
