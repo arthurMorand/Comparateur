@@ -357,17 +357,19 @@ def test_queries(postgres_conn, monet_conn, repetitions=5):
 def plot_query_results(postgres_stats, monet_stats):
     query_names = list(postgres_stats.keys())
     postgres_means = [stats[0] for stats in postgres_stats.values()]
+    postgres_stds = [stats[1] for stats in postgres_stats.values()]
     monet_means = [stats[0] for stats in monet_stats.values()]
+    monet_stds = [stats[1] for stats in monet_stats.values()]
 
     x = np.arange(len(query_names))
 
     plt.figure(figsize=(12, 6))
-    plt.bar(x - 0.2, postgres_means, 0.4, label='PostgreSQL', color='blue', capsize=5)
-    plt.bar(x + 0.2, monet_means, 0.4, label='MonetDB', color='orange', capsize=5)
+    plt.bar(x - 0.2, postgres_means, 0.4, label='PostgreSQL', color='blue', yerr=postgres_stds, capsize=5)
+    plt.bar(x + 0.2, monet_means, 0.4, label='MonetDB', color='orange', yerr=monet_stds, capsize=5)
 
     plt.xlabel('Requêtes')
     plt.ylabel('Temps d\'exécution (s)')
-    plt.title('Comparaison des performances des requêtes - PostgreSQL vs MonetDB')
+    plt.title('Graphique 9 : Comparaison des performances des requêtes - PostgreSQL vs MonetDB')
     plt.xticks(x, query_names, rotation=45)
     plt.legend()
     plt.tight_layout()
