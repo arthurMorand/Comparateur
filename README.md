@@ -22,7 +22,7 @@ Le dossier `config` doit contenir les fichiers suivants :
 
 Ce fichier est utilisé pour l'authentification au service kaggle.
 
-1. Créez un fichier nommé `kaggle.json` dans le dossier `config`.
+1. Créez un fichier nommé `kaggle.json` dans le dossier `config` ou téléchargez ce fichier depuis l'onglet `settings` de votre compte [Kaggle](https://www.kaggle.com/settings).
 2. Ajoutez-y le contenu suivant :
 
    ```json
