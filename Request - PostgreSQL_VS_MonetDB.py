@@ -263,8 +263,9 @@ def insert_data_monet(monet_conn, data, table_name, max_rows=None):
 def insert_data(postgres_conn, monet_conn, data, table_name):
     print()
     print("Insertion des données dans les tables dans PostgreSQL et MonetDB")
-    insert_data_monet(postgres_conn, data, table_name)
-    insert_data_postgres(monet_conn, data, table_name)
+    for i in range (10):
+        insert_data_monet(postgres_conn, data, table_name)
+        insert_data_postgres(monet_conn, data, table_name)
 
 def plot_results(batch_sizes, postgres_avg_times, postgres_std_times, monet_avg_times, monet_std_times):
     plt.figure(figsize=(10, 6))
