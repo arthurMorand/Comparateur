@@ -1,10 +1,16 @@
-# Configuration du Projet
+# Expérimentations sur les données de Kaggle
+## Introduction
+ Pour évaluer les performances de différentes bases de données, nous avons choisi d'utiliser des données disponibles sur Kaggle.
+Pour comparer les performances entre PostgreSQL et MonetDB :
+- d'insertion et de suppression, exécutez le script `Insertion_Suppression_PostgreSQL_VS_MonetDB.py`.
+- des requêtes SQL, exécutez le script `Requetes_SQL_PostgreSQL_VS_MonetDB.py`.
+## Configuration
 
 Ce document vous guide à travers la configuration nécessaire pour exécuter le projet correctement. Vous devez préparer un dossier de configuration contenant les fichiers requis pour l'authentification et les connexions aux bases de données.
 
 ---
 
-## Étape 1 : Créer le dossier de configuration
+### Étape 1 : Créer le dossier de configuration
 
 1. À la racine du projet, créez un dossier nommé `config`.
 
@@ -12,13 +18,13 @@ Ce document vous guide à travers la configuration nécessaire pour exécuter le
    mkdir config
     ```
    
-## Étape 2 : Ajouter les fichiers de configuration
+### Étape 2 : Ajouter les fichiers de configuration
 
 Le dossier `config` doit contenir les fichiers suivants :
 
 ---
 
-### 1. `kaggle.json`
+#### 1. `kaggle.json`
 
 Ce fichier est utilisé pour l'authentification au service kaggle.
 
@@ -30,7 +36,7 @@ Ce fichier est utilisé pour l'authentification au service kaggle.
      "username": "votre_nom_d_utilisateur",
      "key": "votre_cle"
    }
-### 2. `bdd.ini`
+#### 2. `bdd.ini`
 
 Ce fichier configure les connexions aux bases de données.
 
@@ -52,7 +58,7 @@ Ce fichier configure les connexions aux bases de données.
       host = host_address
       port = port_number
        ```
-   ### 3. Permissions d'accès à `kaggle.json` et `bdd.ini`
+   #### 3. Permissions d'accès à `kaggle.json` et `bdd.ini`
    ```bash
        chmod 600 config/kaggle.json config/bdd.ini
     ```
